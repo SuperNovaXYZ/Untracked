@@ -1,5 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
+import { Chart, ArcElement, Tooltip, Legend, DoughnutController } from 'chart.js';
 
+
+Chart.register(ArcElement, Tooltip, Legend, DoughnutController)
 
 function App() {
 
@@ -7,6 +10,32 @@ const [entries, setEntries]= useState<any[]>([]);
 const [activity, setActivity]=useState("");
 const [category, setCategory]= useState("");
 const [duration, setDuration]= useState(0);
+
+const chartRef= useRef<HTMLCanvasElement>(null);
+
+
+
+useEffect(()=>{
+  if (!chartRef.current ) return
+
+  const chart = new Chart(chartRef.current,{
+    type:'doughnut',
+    data: {
+      labels:['Coding','Gaming','Learning','Youtube','Other'],
+      datasets: [{
+        data: [30,30,25,15,10],
+        backgroundColor: ['#7F77DD', '#1D9E75', '#378ADD', '#E24B4A', '#888780'],
+        borderWidth: 0,
+      }]
+    },
+    options: {
+      cutout: '72%',
+      plugins: {legend:{display: true }}
+    }
+  })
+
+  return () => chart.destroy()
+},[])
 
 
 useEffect(()=>{
@@ -54,6 +83,8 @@ const submitEntry = async () => {
     />
 
     <button onClick={submitEntry}>Log Activity</button>
+
+    <canvas ref={chartRef} width={90} height={90}/>
 
     <ul>
       {entries.map(entry=>(<li key={entry.id}> {entry.activity}-{entry.category}-{entry.duration}m</li>))}

@@ -47,3 +47,5 @@ def create_entry(entry: Entry, db:Session=Depends(get_db)):
     db.commit()
     db.refresh(db_entry)
     return db_entry
+
+    
