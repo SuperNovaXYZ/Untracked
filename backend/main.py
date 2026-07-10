@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from database import SessionLocal
 import models 
+import anthropic
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -47,5 +48,15 @@ def create_entry(entry: Entry, db:Session=Depends(get_db)):
     db.commit()
     db.refresh(db_entry)
     return db_entry
+
+@app.get("/summaries")
+def get_summary(db:Session=Depends(get_db)):
+    db.query(models.Entry).all()
+    client=anthropic.Anthropic()
+    client.messages.build()
+
+    return insight
+
+
 
     
